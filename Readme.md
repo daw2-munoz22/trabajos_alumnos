@@ -15,3 +15,7 @@ Utilizaremos los procedimientos utilizados mediate Ajai y Scrun
 2. Dividiremos las historias en tareas
 3. Agruparemos las historias en sprints
 
+### Recursos
+```
+npm install boostrap
+```
