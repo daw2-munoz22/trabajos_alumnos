@@ -1,0 +1,107 @@
+import { P as Proyectos } from "./proyectos-9ff6e2ab.js";
+import "./main-24098f61.js";
+const proyectosVista = {
+  template: `
+    <main style="padding-top: 100px">
+    <div class="container">
+        <h1>Proyectos</h1>
+        <a href="/#/nuevoProyecto" id="nuevoProyecto" class="btn btn-success mt-3">Nuevo Proyecto</a>
+        <a href="/#/misProyectos" id="misProyectos" class="btn btn-warning mt-3 ms-2">Mis Proyectos</a>
+        <table id="tablaProyectos" class="table table-striped table-hover mt-5 align-middle">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>AUTOR</th>
+                    <th>NOMBRE</th>
+                    <th>DESCRIPCIÓN</th>
+                    <th>ENLACE</th>
+                    <th class="w-100"></th>
+                </tr>
+            </thead>
+            <tbody>
+                       
+                
+                
+            </tbody>
+        </table>
+    </div>
+  </main>
+  
+  `,
+  script: async () => {
+    try {
+      const proyectos = await Proyectos.getAll();
+      console.log("numero de proyectos en la base de datos: ", proyectos.length);
+      let tabla = "";
+      for (const proyecto of proyectos) {
+        tabla += `
+      <tr>
+        <td>
+          <img src="./recursos/imagenes/proyectos/proyecto.png" width="100" alt="" data-id="${proyecto.id}" class="detalle"/>
+        </td>
+        <td>${proyecto.user_id}</td>
+        <td>${proyecto.nombre}</td>
+        <td class="w-100">${proyecto.description}</td>
+        <td><a href="${proyecto.enlace}" target="_black">${proyecto.enlace}</a></td>
+        <td class="text-end">
+          <button
+            data-id="${proyecto.id}"
+            type="button"
+            class="btn bg-danger detalle"
+          >
+          <img  data-id="${proyecto.id}" class="detalle w-100" src="./recursos/iconos/icons8-acerca-de.svg" width="20" alt="" />
+          </button>
+          <button
+            data-id="${proyecto.id}"
+            type="button"
+            class="btn bg-info editar mt-1"
+          >
+            <img src="./recursos/iconos/icons8-editar.svg" width="20" alt="" class="editar" data-id="${proyecto.id}"/>
+          </button>
+
+          <button
+              data-id="${proyecto.id}"
+              type="button"
+              class="btn bg-danger borrar mt-1"
+          >
+            <img  data-id="${proyecto.id}" class="borrar w-100" src="./recursos/iconos/icons8-basura-llena.svg" width="20" alt="" />
+          </button>
+        </td>
+      </tr>
+      `;
+      }
+      const tablaProyectosBody = document.querySelector("#tablaProyectos tbody");
+      if (tablaProyectosBody)
+        tablaProyectosBody.innerHTML = tabla;
+      const tablaProyectos = document.querySelector("#tablaProyectos");
+      if (tablaProyectos) {
+        tablaProyectos.addEventListener("click", async (e) => {
+          const id = e.target.dataset.id;
+          if (e.target.classList.contains("borrar")) {
+            try {
+              const proyectoABorrar = await Proyectos.getById(id);
+              const seguro = confirm("¿Está seguro que desea borrar el proyecto? Se eliminarán todos sus comentarios y notas " + proyectoABorrar.nombre + ", " + proyectoABorrar.nombre);
+              if (seguro) {
+                await Proyectos.delete(id);
+              }
+              window.location.href = "/trabajos_alumnos/#/proyectos";
+            } catch (error) {
+              alert("No se han podido borrar el proyecto" + error);
+            }
+          }
+          if (e.target.classList.contains("editar")) {
+            window.location.href = "/trabajos_alumnos/#/editarProyecto/" + id;
+          }
+          if (e.target.classList.contains("detalle")) {
+            window.location.href = "/trabajos_alumnos/#/detalleProyecto/" + id;
+          }
+        });
+      }
+    } catch (error) {
+      alert("No se han podido cargar la tabla de usuarios " + error);
+    }
+  }
+};
+export {
+  proyectosVista as default
+};
